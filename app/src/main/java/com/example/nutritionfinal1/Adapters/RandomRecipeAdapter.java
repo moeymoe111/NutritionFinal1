@@ -24,6 +24,7 @@ public class RandomRecipeAdapter extends RecyclerView.Adapter<RandomRecipeViewHo
     List<Recipe> list;
     RecipeClickListener listener;
 
+    //Create an adapter constructor class which calls for class context, a list of recipes, and a recipe click listener
     public RandomRecipeAdapter(Context context, List<Recipe> list, RecipeClickListener listener){
         this.context = context;
         this.list = list;
@@ -33,12 +34,14 @@ public class RandomRecipeAdapter extends RecyclerView.Adapter<RandomRecipeViewHo
 
     @NonNull
     @Override
+    //create a view with the list random recipe layout XML
     public RandomRecipeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new RandomRecipeViewHolder(LayoutInflater.from(context).inflate(R.layout.list_random_recipe, parent, false));
     }
 
     @SuppressLint("SetTextI18n")
     @Override
+    //set the text view data to the corresponding recipe data
     public void onBindViewHolder(@NonNull RandomRecipeViewHolder holder, int position) {
         holder.textView_title.setText(list.get(position).title);
         holder.textView_title.setSelected(true);
@@ -46,6 +49,7 @@ public class RandomRecipeAdapter extends RecyclerView.Adapter<RandomRecipeViewHo
         holder.textView_time.setText(list.get(position).readyInMinutes+ " Minutes");
         Picasso.get().load(list.get(position).image).into(holder.imageView_food);
 
+        //create an on click listener for the recipe that receives the recipe ID
         holder.random_list_container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -66,6 +70,7 @@ class RandomRecipeViewHolder extends RecyclerView.ViewHolder {
     ImageView imageView_food;
 
 
+    //call the list random recipe layout views for each text/image view
     public RandomRecipeViewHolder(@NonNull View itemView) {
         super(itemView);
         random_list_container = itemView.findViewById(R.id.random_list_container);

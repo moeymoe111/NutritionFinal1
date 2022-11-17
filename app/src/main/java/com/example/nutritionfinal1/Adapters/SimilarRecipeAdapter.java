@@ -24,6 +24,7 @@ public class SimilarRecipeAdapter extends RecyclerView.Adapter<SimilarRecipeView
     List<SimilarRecipeResponse> list;
     RecipeClickListener listener;
 
+    //Create an adapter constructor class that calls for class context, a list of similar recipes, and a recipe click listener
     public SimilarRecipeAdapter(Context context, List<SimilarRecipeResponse> list, RecipeClickListener listener) {
         this.context = context;
         this.list = list;
@@ -32,17 +33,20 @@ public class SimilarRecipeAdapter extends RecyclerView.Adapter<SimilarRecipeView
 
     @NonNull
     @Override
+    //create a view with the list similar recipes layout XMl
     public SimilarRecipeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new SimilarRecipeViewHolder(LayoutInflater.from(context).inflate(R.layout.list_similar_recipes, parent, false));
     }
 
     @Override
+    //set the similar recipe data to the corresponding similar recipe data from the API
     public void onBindViewHolder(@NonNull SimilarRecipeViewHolder holder, int position) {
         holder.textView_similar_title.setText(list.get(position).title);
         holder.textView_similar_title.setSelected(true);
         holder.textView_similar_servings.setText(list.get(position).servings+" people");
         Picasso.get().load("https://spoonacular.com/recipeImages/" +list.get(position).id+"-556x370."+list.get(position).imageType).into(holder.imageView_similar);
 
+        //Create an on click listener to receive the selected recipe ID
         holder.similar_recipe_holder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -56,11 +60,13 @@ public class SimilarRecipeAdapter extends RecyclerView.Adapter<SimilarRecipeView
         return list.size();
     }
 }
+
 class SimilarRecipeViewHolder extends RecyclerView.ViewHolder {
     CardView similar_recipe_holder;
     TextView textView_similar_title, textView_similar_servings;
     ImageView imageView_similar;
 
+    //Set the class item views to the corresponding item views from the similar recipes layout XML
     public SimilarRecipeViewHolder(@NonNull View itemView) {
         super(itemView);
         similar_recipe_holder = itemView.findViewById(R.id.similar_recipe_holder);

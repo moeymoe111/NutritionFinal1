@@ -17,10 +17,10 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsViewHolder>{
-
     Context context;
     List<ExtendedIngredient> list;
 
+    //Create an adapter constructor with class context and the list from the Extended Ingredient model
     public IngredientsAdapter(Context context, List<ExtendedIngredient> list) {
         this.context = context;
         this.list = list;
@@ -28,6 +28,7 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsViewHold
 
     @NonNull
     @Override
+    //create a view with the list meal ingredients layout
     public IngredientsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new IngredientsViewHolder(LayoutInflater.from(context).inflate(R.layout.list_meal_ingredients, parent, false));
 
@@ -35,6 +36,7 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsViewHold
 
     @Override
     public void onBindViewHolder(@NonNull IngredientsViewHolder holder, int position) {
+        //Set the view holder text to the corresponding recipe text
         holder.textView_ingredients_quantity.setText(list.get(position).original);
         holder.textView_ingredients_quantity.setSelected(true);
 
@@ -46,7 +48,7 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsViewHold
         return list.size();
     }
 }
-
+//Create a class to list recipe ingredients with textViews
 class IngredientsViewHolder extends RecyclerView.ViewHolder {
     TextView textView_ingredients_quantity;
     public IngredientsViewHolder(@NonNull View itemView) {
