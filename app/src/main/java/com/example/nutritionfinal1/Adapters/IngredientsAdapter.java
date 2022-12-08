@@ -4,21 +4,19 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.nutritionfinal1.Models.ExtendedIngredient;
+import com.example.nutritionfinal1.Listeners.Models.ExtendedIngredient;
 import com.example.nutritionfinal1.R;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsViewHolder>{
     Context context;
-    List<ExtendedIngredient> list;
+    private List<ExtendedIngredient> list;
 
     //Create an adapter constructor with class context and the list from the Extended Ingredient model
     public IngredientsAdapter(Context context, List<ExtendedIngredient> list) {
@@ -46,6 +44,10 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsViewHold
     @Override
     public int getItemCount() {
         return list.size();
+    }
+
+    public List<ExtendedIngredient> getIngredients() {
+        return list;
     }
 }
 //Create a class to list recipe ingredients with textViews

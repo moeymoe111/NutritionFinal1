@@ -12,6 +12,23 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NutritionFinal1">
         <activity
+            android:name=".MainActivity2"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".RecipeNutritionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ShowRecipesActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".RecipeDetailsActivity"
             android:exported="false">
             <meta-data

@@ -1,4 +1,4 @@
-package com.example.nutritionfinal1.Models;
+package com.example.nutritionfinal1.Listeners.Models;
 
 public class Ingredient {
     public int id;

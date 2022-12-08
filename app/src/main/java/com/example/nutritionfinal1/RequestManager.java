@@ -4,12 +4,16 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import com.example.nutritionfinal1.Listeners.InstructionsListener;
 import com.example.nutritionfinal1.Listeners.RandomRecipeResponseListener;
 import com.example.nutritionfinal1.Listeners.RecipeDetailsListener;
 import com.example.nutritionfinal1.Listeners.SimilarRecipesListener;
-import com.example.nutritionfinal1.Models.RandomRecipeAPIResponse;
-import com.example.nutritionfinal1.Models.RecipeDetailsResponse;
-import com.example.nutritionfinal1.Models.SimilarRecipeResponse;
+import com.example.nutritionfinal1.Listeners.Models.InstructionsResponse;
+import com.example.nutritionfinal1.Listeners.Models.RandomRecipeAPIResponse;
+import com.example.nutritionfinal1.Listeners.Models.RecipeDetailsResponse;
+import com.example.nutritionfinal1.Listeners.Models.SimilarRecipeResponse;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.List;
 
@@ -24,11 +28,18 @@ import retrofit2.http.Query;
 
 public class RequestManager {
     Context context;
+
+    Gson gson = new GsonBuilder()
+            .setLenient()
+            .create();
+
+
     //call the retrofit API to help with internet transactions
     Retrofit retrofit = new Retrofit.Builder()
             .baseUrl("https://api.spoonacular.com/")
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build();
+
 
     public RequestManager(Context context) {
         this.context = context;
@@ -105,6 +116,27 @@ public class RequestManager {
         });
     }
 
+    public void getRecipeInstructions(InstructionsListener listener, int id){
+        CallInstructions callInstructions = retrofit.create(CallInstructions.class);
+        Call<List<InstructionsResponse>> call = callInstructions.callInstructions(id, context.getString(R.string.api_key));
+        call.enqueue(new Callback<List<InstructionsResponse>>() {
+            @Override
+            public void onResponse(Call<List<InstructionsResponse>> call, Response<List<InstructionsResponse>> response) {
+                if(!response.isSuccessful()){
+                    listener.didError(response.message());
+                    return;
+                }
+                listener.didFetch(response.body(), response.message());
+            }
+
+            @Override
+            public void onFailure(Call<List<InstructionsResponse>> call, Throwable t) {
+                listener.didError(t.getMessage());
+            }
+        });
+    }
+
+
     private interface CallRandomRecipes{
         @GET("recipes/random")
         Call<RandomRecipeAPIResponse> callRandomRecipe(
@@ -130,4 +162,14 @@ public class RequestManager {
                 @Query("apiKey") String apiKey
         );
     }
+
+    private interface CallInstructions{
+        @GET ("recipes/{id}/analyzedInstructions")
+        Call<List<InstructionsResponse>> callInstructions(
+                @Path("id") int id,
+                @Query("apiKey") String apiKey
+        );
+    }
+
 }
+

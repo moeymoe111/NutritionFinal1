@@ -3,17 +3,14 @@ package com.example.nutritionfinal1;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.nutritionfinal1.Adapters.RandomRecipeAdapter;
-import com.example.nutritionfinal1.Listeners.RandomRecipeResponseListener;
-import com.example.nutritionfinal1.Listeners.RecipeClickListener;
-import com.example.nutritionfinal1.Models.RandomRecipeAPIResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,28 +22,30 @@ public class MainActivity extends AppCompatActivity {
     SearchView searchView;
     RandomRecipeAdapter randomRecipeAdapter;
     List<String> tags = new ArrayList<>();
+    Button mex, ind, ital, japan, euro, carib;
+    String query;
 
     //Create the launch page of the app
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Set the view to the main activity layout XML
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.recipes_start_screen);
 
         dialog = new ProgressDialog(this);
         dialog.setTitle("Loading...");
 
+       findButtons();
+
         //Create a search bar with the created searchView layout that reads user input
-        searchView = findViewById(R.id.searchView_home);
+        searchView = findViewById(R.id.searchView_start);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                //When user enters search, add it to tags ArrayList
-                tags.clear();
-                tags.add(query);
+
                 //Call getRandomRecipes method with given tags to show user search results
-                manager.getRandomRecipes(randomRecipeResponseListener, tags);
-                dialog.show();
+                startActivity(new Intent(MainActivity.this, ShowRecipesActivity.class)
+                        .putExtra("query", query));
                 return true;
             }
 
@@ -57,42 +56,67 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //Create a new request manager to call API requests
-        manager = new RequestManager(this);
 
-        //Show a collection of random recipes on app launch
-        manager.getRandomRecipes(randomRecipeResponseListener, tags);
+        mex.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                query = "mexican";
+                openShowRecipes();
+            }
+        });
+        ind.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                query = "indian";
+                openShowRecipes();
+            }
+        });
+        ital.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                query = "italian";
+                openShowRecipes();
+            }
+        });
+        japan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                query = "japanese";
+                openShowRecipes();
+            }
+        });
+        euro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                query = "european";
+                openShowRecipes();
+            }
+        });
+        carib.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                query = "caribbean";
+                openShowRecipes();
+            }
+        });
+
+
         dialog.show();
     }
-    //Call the random recipe listener interface
-    private final RandomRecipeResponseListener randomRecipeResponseListener = new RandomRecipeResponseListener() {
-        @Override
-        //If the call is successful, create a layout to show random recipes
-        public void didFetch(RandomRecipeAPIResponse response, String message) {
-            dialog.dismiss();
-            //Find the recycler view from the activity main layout
-            recyclerView = findViewById(R.id.recycler_random);
-            recyclerView.setHasFixedSize(true);
-            recyclerView.setLayoutManager(new GridLayoutManager(MainActivity.this, 1));
-            //Call the randomRecipeAdapter to convert API data into the recycler view
-            randomRecipeAdapter = new RandomRecipeAdapter(MainActivity.this, response.recipes, recipeClickListener);
-            recyclerView.setAdapter(randomRecipeAdapter);
 
-        }
+    private void findButtons() {
+        mex = (Button) findViewById(R.id.mexicanButton);
+        ind = (Button) findViewById(R.id.indianButton);
+        ital = (Button) findViewById(R.id.italianButton);
+        japan = (Button) findViewById(R.id.japaneseButton);
+        euro = (Button) findViewById(R.id.europeanButton);
+        carib = (Button) findViewById(R.id.caribbeanButton);
 
-        @Override
-        //if the listener has an error, display the message to the user
-        public void didError(String message) {
-            Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
-        }
-    };
+    }
 
-    //When the user clicks on a recipe, call the Recipe Details activity to show recipe details
-    private final RecipeClickListener recipeClickListener = new RecipeClickListener() {
-        @Override
-        public void onRecipeClicked(String id) {
-            startActivity(new Intent(MainActivity.this, RecipeDetailsActivity.class)
-                    .putExtra("id", id));
-        }
-    };
+
+    public void openShowRecipes(){
+        startActivity(new Intent(MainActivity.this, ShowRecipesActivity.class)
+                .putExtra("query", query));
+    }
 }

@@ -7,17 +7,24 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.nutritionfinal1.Adapters.IngredientsAdapter;
+import com.example.nutritionfinal1.Adapters.InstructionsAdapter;
 import com.example.nutritionfinal1.Adapters.SimilarRecipeAdapter;
+import com.example.nutritionfinal1.Listeners.InstructionsListener;
 import com.example.nutritionfinal1.Listeners.RecipeClickListener;
 import com.example.nutritionfinal1.Listeners.RecipeDetailsListener;
 import com.example.nutritionfinal1.Listeners.SimilarRecipesListener;
-import com.example.nutritionfinal1.Models.RecipeDetailsResponse;
-import com.example.nutritionfinal1.Models.SimilarRecipeResponse;
+import com.example.nutritionfinal1.Listeners.Models.ExtendedIngredient;
+import com.example.nutritionfinal1.Listeners.Models.InstructionsResponse;
+import com.example.nutritionfinal1.Listeners.Models.RecipeDetailsResponse;
+import com.example.nutritionfinal1.Listeners.Models.SimilarRecipeResponse;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -26,12 +33,14 @@ public class RecipeDetailsActivity extends AppCompatActivity {
 
     int id;
     TextView textView_meal_name, textView_meal_source, textView_meal_summary;
-    ImageView imageView_meal_image;
-    RecyclerView recycler_meal_ingredients, recycler_meal_similar;
+    ImageView imageView_meal_image, imageView_nutrition_label;
+    RecyclerView recycler_meal_ingredients, recycler_meal_similar, recycler_meal_instructions;
     RequestManager manager;
     ProgressDialog dialog;
     IngredientsAdapter ingredientsAdapter;
     SimilarRecipeAdapter similarRecipeAdapter;
+    InstructionsAdapter instructionsAdapter;
+    Button nutritionButton;
 
 
     @Override
@@ -50,10 +59,25 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         //get recipe details and similar recipes using the given recipe IDs
         manager.getRecipeDetails(recipeDetailsListener, id);
         manager.getSimilarRecipes(similarRecipesListener, id);
+        manager.getRecipeInstructions(instructionsListener, id);
         dialog = new ProgressDialog(this);
         dialog.setTitle("Loading Details...");
         dialog.show();
+        nutritionButton = (Button) findViewById(R.id.nutrition_button);
+        nutritionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                List<ExtendedIngredient> ingredients = ingredientsAdapter.getIngredients();
+                openRecipeNutritionActivity(ingredients);
+            }
+        });
     }
+    public void openRecipeNutritionActivity (List<ExtendedIngredient> ingredients) {
+            Intent intent = new Intent(this, RecipeNutritionActivity.class);
+            RecipeNutritionActivity.ingredients = ingredients;
+            startActivity(intent);
+        }
+
 
     //Get layout views from the recipe details layout XML
     private void findViews() {
@@ -63,6 +87,7 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         imageView_meal_image = findViewById(R.id.imageView_meal_image);
         recycler_meal_ingredients = findViewById(R.id.recycler_meal_ingredients);
         recycler_meal_similar = findViewById(R.id.recycler_meal_similar);
+        recycler_meal_instructions = findViewById(R.id.recycler_meal_instructions);
 
     }
 
@@ -74,7 +99,8 @@ public class RecipeDetailsActivity extends AppCompatActivity {
             dialog.dismiss();
             textView_meal_name.setText(response.title);
             textView_meal_source.setText(response.sourceName);
-            textView_meal_summary.setText(response.summary);
+            String summary = Html.fromHtml(response.summary).toString();
+            textView_meal_summary.setText(summary);
             Picasso.get().load(response.image).into(imageView_meal_image);
 
             //Use a recycler view to display recipe ingredients
@@ -90,6 +116,7 @@ public class RecipeDetailsActivity extends AppCompatActivity {
             Toast.makeText(RecipeDetailsActivity.this, message, Toast.LENGTH_SHORT).show();
         }
     };
+
 
     //Call the similar recipes listener
     private final SimilarRecipesListener similarRecipesListener = new SimilarRecipesListener() {
@@ -117,4 +144,20 @@ public class RecipeDetailsActivity extends AppCompatActivity {
                     .putExtra("id", id));
         }
     };
+
+    private final InstructionsListener instructionsListener = new InstructionsListener() {
+        @Override
+        public void didFetch(List<InstructionsResponse> response, String message) {
+            recycler_meal_instructions.setHasFixedSize(true);
+            recycler_meal_instructions.setLayoutManager(new LinearLayoutManager(RecipeDetailsActivity.this, LinearLayoutManager.VERTICAL, false));
+            instructionsAdapter = new InstructionsAdapter(RecipeDetailsActivity.this, response);
+            recycler_meal_instructions.setAdapter(instructionsAdapter);
+        }
+
+        @Override
+        public void didError(String message) {
+
+        }
+    };
+
 }

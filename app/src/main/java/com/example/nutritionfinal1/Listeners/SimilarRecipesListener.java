@@ -1,6 +1,6 @@
 package com.example.nutritionfinal1.Listeners;
 
-import com.example.nutritionfinal1.Models.SimilarRecipeResponse;
+import com.example.nutritionfinal1.Listeners.Models.SimilarRecipeResponse;
 
 import java.util.List;
 

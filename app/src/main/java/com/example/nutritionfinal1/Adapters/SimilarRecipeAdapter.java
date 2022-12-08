@@ -12,7 +12,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.nutritionfinal1.Listeners.RecipeClickListener;
-import com.example.nutritionfinal1.Models.SimilarRecipeResponse;
+import com.example.nutritionfinal1.Listeners.Models.SimilarRecipeResponse;
 import com.example.nutritionfinal1.R;
 import com.squareup.picasso.Picasso;
 
